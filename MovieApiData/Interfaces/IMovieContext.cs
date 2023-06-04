@@ -8,11 +8,11 @@ namespace MovieApi.Data.Interfaces
 		/// <summary>
 		/// The list of movies in the DB
 		/// </summary>
-		DbSet<Movie> Movies { get; set; }
+		DbSet<Movie>? Movies { get; set; }
 
 		/// <summary>
 		/// The list of genres in the DB
 		/// </summary>
-		DbSet<Genre> Genres { get; set; }
+		DbSet<Genre>? Genres { get; set; }
 	}
 }
