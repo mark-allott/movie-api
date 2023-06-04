@@ -8,7 +8,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{74BF5D9F-65D4-44D5-BB3E-5CBBC2C0C1A2}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieApi.Data", "MovieApiData\MovieApi.Data.csproj", "{733286C6-F887-422B-83A8-766DBCF0903F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +23,10 @@ Global
 		{E7AD8542-32BC-47B9-BD87-85FFC04F1D8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7AD8542-32BC-47B9-BD87-85FFC04F1D8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7AD8542-32BC-47B9-BD87-85FFC04F1D8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{733286C6-F887-422B-83A8-766DBCF0903F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{733286C6-F887-422B-83A8-766DBCF0903F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{733286C6-F887-422B-83A8-766DBCF0903F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{733286C6-F887-422B-83A8-766DBCF0903F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
