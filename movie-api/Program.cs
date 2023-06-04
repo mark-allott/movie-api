@@ -1,35 +1,22 @@
 namespace MovieApi
 {
-  public class Program
-  {
-    public static void Main(string[] args)
-    {
-      var builder = WebApplication.CreateBuilder(args);
+	public class Program
+	{
+		public static void Main(string[] args)
+		{
+			var host = GetHostBuilder(args)
+				.Build();
 
-      // Add services to the container.
+			host.Run();
+		}
 
-      builder.Services.AddControllers();
-      // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-      builder.Services.AddEndpointsApiExplorer();
-      builder.Services.AddSwaggerGen();
-
-      var app = builder.Build();
-
-      // Configure the HTTP request pipeline.
-      if (app.Environment.IsDevelopment())
-      {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-      }
-
-      app.UseHttpsRedirection();
-
-      app.UseAuthorization();
-
-
-      app.MapControllers();
-
-      app.Run();
-    }
-  }
+		internal static IHostBuilder GetHostBuilder(string[] args)
+		{
+			return Host.CreateDefaultBuilder(args)
+				.ConfigureWebHostDefaults(wh =>
+				{
+					wh.UseStartup<Startup>();
+				});
+		}
+	}
 }
