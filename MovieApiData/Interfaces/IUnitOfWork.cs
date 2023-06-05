@@ -1,6 +1,8 @@
-﻿namespace MovieApi.Data.Interfaces
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace MovieApi.Data.Interfaces
 {
-	public interface IUnitOfWork
+	public interface IUnitOfWork<TContext> where TContext : DbContext
 	{
 		/// <summary>
 		/// Commits changes to the context to the DB
