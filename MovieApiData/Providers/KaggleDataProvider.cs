@@ -63,7 +63,7 @@ namespace MovieApi.Data.Providers
 					VoteCount = s.VoteCount,
 					VoteAverage = s.VoteAverage,
 					PosterUrl = s.PosterUrl,
-					GenreString = s.Genres
+					Genre = s.Genres
 				})
 				.ToList();
 
