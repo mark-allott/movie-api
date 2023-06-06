@@ -52,15 +52,14 @@ namespace MovieApi.Data.DTO
 		public string Genre { get; set; } = string.Empty;
 
 		[NotMapped]
-		public List<GenreDto> GenreList
+		public List<string> GenreList
 		{
 			get
 			{
 				return string.IsNullOrWhiteSpace(Genre)
-					? new List<GenreDto>()
+					? new List<string>()
 					: Genre.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
 						.OrderBy(o => o)
-						.Select(s => new GenreDto() { Name = s })
 						.ToList();
 			}
 		}
