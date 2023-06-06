@@ -59,6 +59,12 @@ namespace MovieApi.Data.Repositories
 			Entities.RemoveRange(entities);
 		}
 
+		/// <inheritdoc />
+		public int ExecuteDelete()
+		{
+			return Entities.ExecuteDelete();
+		}
+
 		#endregion ICommandRepository<TEntity> implementation
 	}
 }

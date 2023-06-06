@@ -37,5 +37,11 @@
 		/// </summary>
 		/// <param name="entities"></param>
 		void DeleteRange(IEnumerable<TEntity> entities);
+
+		/// <summary>
+		/// Maps to the new EFCore 7 ExecuteDelete to remove all entities
+		/// </summary>
+		/// <returns></returns>
+		int ExecuteDelete();
 	}
 }
