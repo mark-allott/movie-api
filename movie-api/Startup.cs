@@ -1,4 +1,5 @@
 ﻿using MovieApi.Configuration;
+using MovieApi.Data.Providers;
 
 namespace MovieApi
 {
@@ -50,6 +51,9 @@ namespace MovieApi
 				.AddApplicationWebApi(Configuration)
 				.AddApplicationSwagger(Configuration)
 				.AddAuthorization();
+
+			services.AddScoped(typeof(KaggleDataProvider));
+			services.AddScoped(typeof(KaggleDataImporter));
 		}
 	}
 }
