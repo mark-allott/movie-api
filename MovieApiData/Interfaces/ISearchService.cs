@@ -1,7 +1,7 @@
 ﻿namespace MovieApi.Data.Interfaces
 {
-
-	public interface ISearchService
+	public interface ISearchService :
+		IAutoRegisterService
 	{
 		/// <summary>
 		/// Performs a search of the movie data by title
