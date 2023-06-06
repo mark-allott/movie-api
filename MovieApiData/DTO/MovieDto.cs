@@ -1,4 +1,5 @@
-﻿using MovieApi.Data.Interfaces;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using MovieApi.Data.Interfaces;
 
 namespace MovieApi.Data.DTO
 {
@@ -43,5 +44,22 @@ namespace MovieApi.Data.DTO
 		public string? PosterUrl { get; set; }
 
 		#endregion IPublicity implementation
+
+		[NotMapped]
+		public string GenreString { get; set; } = string.Empty;
+
+		[NotMapped]
+		public List<GenreDto> GenreList
+		{
+			get
+			{
+				return string.IsNullOrWhiteSpace(GenreString)
+					? new List<GenreDto>()
+					: GenreString.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+						.OrderBy(o => o)
+						.Select(s => new GenreDto() { Name = s })
+						.ToList();
+			}
+		}
 	}
 }
