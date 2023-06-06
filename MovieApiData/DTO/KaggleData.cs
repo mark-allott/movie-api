@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using MovieApi.Data.Interfaces;
 
 namespace MovieApi.Data.DTO;
@@ -19,10 +20,11 @@ public class KaggleData :
 	public string Overview { get; set; }
 
 	/// <inheritdoc />
+	[Column("Release_Date")]
 	public DateTime ReleaseDate { get; set; }
 
 	/// <inheritdoc />
-	[AllowNull]
+	[AllowNull, Column("Original_Language")]
 	public string OriginalLanguage { get; set; }
 
 	#endregion IProduction implementation
@@ -33,9 +35,11 @@ public class KaggleData :
 	public double Popularity { get; set; }
 
 	/// <inheritdoc />
+	[Column("Vote_Count")]
 	public long VoteCount { get; set; }
 
 	/// <inheritdoc />
+	[Column("Vote_Average")]
 	public double VoteAverage { get; set; }
 
 	#endregion IPopularity implementation
@@ -43,11 +47,11 @@ public class KaggleData :
 	#region IPublicity implementation
 
 	/// <inheritdoc />
-	[AllowNull]
+	[AllowNull, Column("Poster_Url")]
 	public string PosterUrl { get; set; }
 
 	#endregion IPublicity implementation
 
-	[AllowNull]
+	[AllowNull, Column("Genre")]
 	public string Genres { get; set; }
 }
