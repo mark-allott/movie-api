@@ -25,7 +25,7 @@ namespace MovieApi.Data.Context
 			modelBuilder.Entity<Movie>()
 				.HasMany(m => m.Genres)
 				.WithMany(m => m.Movies)
-				.UsingEntity<MovieGenre>(j => j.HasKey(nameof(MovieGenre.MovieId), nameof(MovieGenre.GenreId)));
+				.UsingEntity<MovieGenre>(j => j.HasKey(nameof(Entities.MovieGenre.MovieId), nameof(Entities.MovieGenre.GenreId)));
 		}
 
 		#region IMovieContext implementation
@@ -41,6 +41,6 @@ namespace MovieApi.Data.Context
 		/// <summary>
 		///	Definition for the many-to-many link table between Movies and Genres
 		/// </summary>
-		public DbSet<MovieGenre>? MovieGenres { get; set; }
+		public DbSet<MovieGenre>? MovieGenre { get; set; }
 	}
 }
