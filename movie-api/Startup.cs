@@ -48,12 +48,10 @@ namespace MovieApi
 			services.AddOptions();
 
 			services.AddApplicationData(Configuration)
+				.AddApplicationServices()
 				.AddApplicationWebApi(Configuration)
 				.AddApplicationSwagger(Configuration)
 				.AddAuthorization();
-
-			services.AddScoped(typeof(KaggleDataProvider));
-			services.AddScoped(typeof(KaggleDataImporter));
 		}
 	}
 }

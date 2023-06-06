@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using MovieApi.Data.Context;
 using MovieApi.Data.Interfaces;
+using MovieApi.Data.Providers;
 
 namespace MovieApi.Configuration;
 
@@ -10,6 +11,9 @@ public static class ServiceConfiguration
 
 	public static IServiceCollection AddApplicationServices(this IServiceCollection services)
 	{
+		services.AddTransient(typeof(KaggleDataProvider));
+		services.AddTransient(typeof(KaggleDataImporter));
+
 		var searchAssemblies = new Assembly[] { typeof(ServiceConfiguration).Assembly, typeof(MovieContext).Assembly };
 
 		return services.AutoRegisterApplicationServices(searchAssemblies);
