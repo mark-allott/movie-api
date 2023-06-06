@@ -8,6 +8,9 @@
 
   <ItemGroup>
     <Folder Include="Context\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Providers\" />
+    <Folder Include="Services\" />
     <Folder Include="UOW\" />
   </ItemGroup>
 
