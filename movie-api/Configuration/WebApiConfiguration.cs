@@ -67,7 +67,6 @@ namespace MovieApi.Configuration
 				.UseSwaggerUI(cfg =>
 				{
 					cfg.DocumentTitle = title;
-					cfg.SwaggerEndpoint("swagger/v1/swagger.json", title);
 				});
 		}
 
