@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -21,7 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\data\" />
+    <Content Update="wwwroot\data\mymoviedb_cleaned.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
