@@ -34,6 +34,11 @@ namespace MovieApi.Data.Entities
 		/// </summary>
 		public virtual ICollection<Genre> Genres { get; set; }
 
+		/// <summary>
+		/// Skip-link navigation to the Actor(s) associated with this movie
+		/// </summary>
+		public virtual ICollection<Actor> Actors { get; set; }
+
 		#endregion Navigation links
 	}
 }
