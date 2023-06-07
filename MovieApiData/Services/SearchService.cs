@@ -69,9 +69,24 @@ namespace MovieApi.Data.Services
 		}
 
 		/// <inheritdoc />
-		public IEnumerable<object> SearchByGenre(params string[] genres)
+		public GenreCollectionResult GetGenres()
 		{
-			throw new NotImplementedException();
+			var sw = System.Diagnostics.Stopwatch.StartNew();
+			try
+			{
+				var collection = _genreRepository.Queryable
+					.AsNoTracking()
+					.Select(s => s.Name)
+					.ToList();
+
+				var response = new GenreCollectionResult(collection, collection.Count, 1, 0);
+				return response;
+			}
+			finally
+			{
+				sw.Stop();
+				_logger.LogInformation($"{nameof(GetGenres)} completed in {sw.Elapsed:ss\\.fff}s");
+			}
 		}
 
 		/// <inheritdoc />
