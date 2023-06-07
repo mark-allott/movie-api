@@ -14,5 +14,10 @@ namespace MovieApi.Data.Interfaces
 		/// The list of genres in the DB
 		/// </summary>
 		DbSet<Genre>? Genres { get; set; }
+
+		/// <summary>
+		/// The list of actors in the DB
+		/// </summary>
+		DbSet<Actor>? Actors { get; set; }
 	}
 }
