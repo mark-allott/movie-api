@@ -228,6 +228,8 @@ namespace MovieApi.Data.Services
 			return genreNames
 				.Select(s => s.ToLower().Trim())
 				.Where(s => !string.IsNullOrWhiteSpace(s))
+				.Distinct()
+				.OrderBy(o => o)
 				.ToArray();
 		}
 
