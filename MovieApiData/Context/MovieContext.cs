@@ -36,6 +36,9 @@ namespace MovieApi.Data.Context
 		/// <inheritdoc />
 		public virtual DbSet<Genre>? Genres { get; set; }
 
+		/// <inheritdoc />
+		public virtual DbSet<Actor>? Actors { get; set; }
+
 		#endregion IMovieContext implementation
 
 		/// <summary>
