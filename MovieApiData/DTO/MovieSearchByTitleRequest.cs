@@ -3,7 +3,7 @@
 	/// <summary>
 	/// Defines a request object for searching for movies by title
 	/// </summary>
-	public class MovieSearchRequest
+	public class MovieSearchByTitleRequest
 	{
 		/// <summary>
 		/// A string to match against the title of the movie
