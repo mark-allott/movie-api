@@ -55,18 +55,10 @@ namespace MovieApi.Data.Interfaces
 		/// <summary>
 		/// Performs a combination search for title and genre
 		/// </summary>
-		/// <param name="title">The title, or partial title of the movie</param>
-		/// <param name="pageNumber">Allows skipping pages of information in the returned results</param>
-		/// <param name="pageSize">Allows defining a size of the page of results</param>
-		/// <param name="useSqlLike"></param>
-		/// <param name="genres">One or more genre names to search by</param>
+		/// <param name="request">The details of the request</param>
 		/// <returns>
 		/// A <see cref="MovieSearchResultCollection"/> object containing the results of the search
 		/// </returns>
-		/// <remarks>
-		/// A <paramref name="pageSize"/> value of 0 (default) is an indication to return all possible results
-		/// </remarks>
-		MovieSearchResultCollection SearchByTitleAndGenre(string title, int pageNumber = 1, int pageSize = 0,
-			bool useSqlLike = false, params string[] genres);
+		MovieSearchResultCollection SearchByTitleAndGenre(MovieSearchByTitleAndGenreRequest request);
 	}
 }
