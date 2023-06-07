@@ -8,7 +8,8 @@ namespace MovieApi.Data.DTO
 		IProduction,
 		IPopularity,
 		IPublicity,
-		IHaveGenre
+		IHaveGenre,
+		IHaveActors
 	{
 		#region IProduction implementation
 
@@ -65,5 +66,25 @@ namespace MovieApi.Data.DTO
 		}
 
 		#endregion IHaveGenre implementation
+
+		#region IHaveActors implementation
+
+		[NotMapped]
+		public string Actors { get; set; } = string.Empty;
+
+		[NotMapped]
+		public List<string> ActorsList
+		{
+			get
+			{
+				return string.IsNullOrWhiteSpace(Actors)
+					? new List<string>()
+					: Actors.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+						.OrderBy(o => o)
+						.ToList();
+			}
+		}
+
+		#endregion IHaveActors implementation
 	}
 }
