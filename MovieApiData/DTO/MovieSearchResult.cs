@@ -7,7 +7,8 @@ namespace MovieApi.Data.DTO
 		IProduction,
 		IPopularity,
 		IPublicity,
-		IHaveGenre
+		IHaveGenre,
+		IHaveActors
 	{
 		#region Ctor
 
@@ -26,6 +27,7 @@ namespace MovieApi.Data.DTO
 			VoteAverage = movie.VoteAverage;
 			PosterUrl = movie.PosterUrl;
 			Genre = string.Join(", ", movie.Genres.Select(s => s.Name));
+			Actors = string.Join(", ", movie.Actors.Select(s => s.Name));
 		}
 
 		#endregion Ctor
@@ -71,5 +73,11 @@ namespace MovieApi.Data.DTO
 		public string Genre { get; set; } = string.Empty;
 
 		#endregion IHaveGenre implementation
+
+		#region IHaveActors implementation
+
+		public string Actors { get; set; } = string.Empty;
+
+		#endregion IHaveActors implementation
 	}
 }
