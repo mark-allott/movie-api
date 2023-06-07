@@ -152,6 +152,45 @@ namespace MovieApi.Data.Services
 			}
 		}
 
+		/// <inheritdoc />
+		public MovieSearchResultCollection SearchByTitleAndGenre(string title, int pageNumber = 1, int pageSize = 0,
+			bool useSqlLike = false, params string[] genres)
+		{
+			var sw = System.Diagnostics.Stopwatch.StartNew();
+			try
+			{
+				//	Santising inputs
+				(pageNumber, pageSize) = SanitisePaging(pageNumber, pageSize);
+				genres = SanitiseGenreNamesForMatching(genres);
+
+				//	Assemble where clause
+				var expr = GetTitleSearchExpression(title, useSqlLike);
+
+				//	Common expression for getting movies matching the title, pulling genres and performing matching as well
+				var matchingMovies = _movieRepository.UntrackedQueryable
+					.Where(expr)
+					.Include(i => i.Genres)
+					.Where(s => !genres.Any() ||
+					            s.Genres.Any(g => genres.Contains(g.Name.ToLower())));
+
+				//	Find total result count
+				var totalCount = matchingMovies.Count();
+
+				//	Assemble the collection of MovieSearchResult entities
+				var collection = matchingMovies
+					.Include(i => i.Genres)
+					.ConvertToSearchResult(pageNumber, pageSize);
+
+				var response = new MovieSearchResultCollection(collection, totalCount, pageNumber, pageSize);
+				return response;
+			}
+			finally
+			{
+				sw.Stop();
+				_logger.LogInformation($"{nameof(SearchByTitleAndGenre)} completed in {sw.Elapsed:ss\\.fff}s");
+			}
+		}
+
 		#endregion ISearchService implementation
 
 		#region Helper methods
