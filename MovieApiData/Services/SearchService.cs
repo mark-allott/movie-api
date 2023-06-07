@@ -36,31 +36,31 @@ namespace MovieApi.Data.Services
 			var sw = System.Diagnostics.Stopwatch.StartNew();
 			try
 			{
-			//	Assemble where clause
-			Expression<Func<Movie, bool>> expr = string.IsNullOrEmpty(title)
-				? movie => true
-				: useSqlLike
-					? movie => EF.Functions.Like(movie.Title, title)
+				//	Assemble where clause
+				Expression<Func<Movie, bool>> expr = string.IsNullOrEmpty(title)
+					? movie => true
+					: useSqlLike
+						? movie => EF.Functions.Like(movie.Title, title)
 						: movie => movie.Title.ToLower().StartsWith(title.ToLower()) ||
 											 movie.Title.ToLower().Contains(title.ToLower());
 
-			//	Find total result count
-			var totalCount = _movieRepository.Queryable
-				.Where(expr)
-				.Count();
+				//	Find total result count
+				var totalCount = _movieRepository.Queryable
+					.Where(expr)
+					.Count();
 
-			//	Assemble the collection of MovieSearchResult entities
-			var collection = _movieRepository.Queryable
-				.AsNoTracking()
-				.Include(i => i.Genres)
-				.Where(expr)
-				.SkipAndTake((pageNumber - 1) * pageSize, pageSize)
-				.Select(m => new MovieSearchResult(m))
-				.ToList();
+				//	Assemble the collection of MovieSearchResult entities
+				var collection = _movieRepository.Queryable
+					.AsNoTracking()
+					.Include(i => i.Genres)
+					.Where(expr)
+					.SkipAndTake((pageNumber - 1) * pageSize, pageSize)
+					.Select(m => new MovieSearchResult(m))
+					.ToList();
 
-			var response = new MovieSearchResultCollection(collection, totalCount, pageNumber, pageSize);
-			return response;
-		}
+				var response = new MovieSearchResultCollection(collection, totalCount, pageNumber, pageSize);
+				return response;
+			}
 			finally
 			{
 				sw.Stop();
@@ -86,6 +86,55 @@ namespace MovieApi.Data.Services
 			{
 				sw.Stop();
 				_logger.LogInformation($"{nameof(GetGenres)} completed in {sw.Elapsed:ss\\.fff}s");
+			}
+		}
+
+		/// <inheritdoc />
+		public MovieSearchResultCollection SearchByGenre(int pageNumber = 1, int pageSize = 0, params string[] genres)
+		{
+			var sw = System.Diagnostics.Stopwatch.StartNew();
+			try
+			{
+				//	Force naming to lowercase
+				genres = genres.Where(s => !string.IsNullOrEmpty(s))
+				.Select(s => s.ToLower())
+				.ToArray();
+
+				//	match genres in the datatset against the incoming list
+				var matchedGenres = _genreRepository.Queryable
+					.Include(i => i.Movies)
+					.AsNoTracking()
+					.Where(q => genres.Contains(q.Name.ToLower()))
+					.ToList();
+
+				var totalCount = _genreRepository.Queryable
+					.Include(i => i.Movies)
+					.AsNoTracking()
+					.Where(q => genres.Contains(q.Name.ToLower()))
+					.SelectMany(m => m.Movies)
+					.Distinct()
+					.Count();
+
+				//	Assemble the collection of MovieSearchResult entities
+				var collection = _genreRepository.Queryable
+					.AsNoTracking()
+					.Include(i => i.Movies)
+					.AsNoTracking()
+					.Where(q => genres.Contains(q.Name.ToLower()))
+					.SelectMany(m => m.Movies)
+					.Include(i => i.Genres)
+					.Distinct()
+					.SkipAndTake((pageNumber - 1) * pageSize, pageSize)
+					.Select(s => new MovieSearchResult(s))
+					.ToList();
+
+				var response = new MovieSearchResultCollection(collection, totalCount, pageNumber, pageSize);
+				return response;
+			}
+			finally
+			{
+				sw.Stop();
+				_logger.LogInformation($"{nameof(SearchByGenre)}(string[]) completed in {sw.Elapsed:ss\\.fff}s");
 			}
 		}
 
