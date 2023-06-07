@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using MovieApi.Data.Helpers;
 using MovieApi.Data.Interfaces;
 
 namespace MovieApi.Data.Repositories
@@ -35,36 +36,10 @@ namespace MovieApi.Data.Repositories
 			return Entities.Find(keys);
 		}
 
-		/// <summary>
-		/// Common method used to skip / take from the <paramref name="query"/> results, returning the
-		/// required entities
-		/// </summary>
-		/// <param name="query">The <see cref="IQueryable{T}"/> being scanned</param>
-		/// <param name="skipCount">
-		/// The number of entities to skip in order to return the required results
-		/// </param>
-		/// <param name="takeCount">
-		/// The number of entities to return in total, after any <paramref name="skipCount"/> are processed
-		/// </param>
-		/// <returns>A filtered version of the <paramref name="query"/></returns>
-		/// <remarks>
-		/// If <paramref name="skipCount"/> is zero, or negative, no results are skipped. Similarly, if
-		/// <paramref name="takeCount"/> is zero, or negative, then all remaining results are returned
-		/// </remarks>
-		protected IQueryable<TEntity> SkipAndTake(IQueryable<TEntity> query, int skipCount, int takeCount)
-		{
-			if (skipCount > 0)
-				query = query.Skip(skipCount);
-
-			if (takeCount > 0)
-				query = query.Take(takeCount);
-
-			return query;
-		}
-
 		/// <inheritdoc />
-		public IEnumerable<TEntity> Search<TKey>(Expression<Func<TEntity, bool>> searchPredicate, Expression<Func<TEntity, TKey>>? orderByPredicate = null,
-			bool orderByDescending = false, int takeCount = 0, int skipCount = 0)
+		public IEnumerable<TEntity> Search<TKey>(Expression<Func<TEntity, bool>> searchPredicate,
+			Expression<Func<TEntity, TKey>>? orderByPredicate = null, bool orderByDescending = false, int takeCount = 0,
+			int skipCount = 0)
 		{
 			var query = Queryable.Where(searchPredicate);
 
@@ -75,21 +50,24 @@ namespace MovieApi.Data.Repositories
 					: query.OrderBy(orderByPredicate);
 			}
 
-			return SkipAndTake(query, skipCount, takeCount).ToList();
+			return query.SkipAndTake(skipCount, takeCount)
+				.ToList();
 		}
 
 		/// <inheritdoc />
 
-		public IEnumerable<TEntity> Search<TKey>(Expression<Func<TEntity, bool>> searchPredicate, int takeCount = 0, int skipCount = 0)
+		public IEnumerable<TEntity> Search<TKey>(Expression<Func<TEntity, bool>> searchPredicate, int takeCount = 0,
+			int skipCount = 0)
 		{
 			var query = Queryable.Where(searchPredicate);
 
-			return SkipAndTake(query, skipCount, takeCount).ToList();
+			return query.SkipAndTake(skipCount, takeCount)
+				.ToList();
 		}
 
 		/// <inheritdoc />
-		public IEnumerable<TEntity> All<TKey>(Expression<Func<TEntity, TKey>>? orderByPredicate = null, bool orderByDescending = false, int takeCount = 0,
-			int skipCount = 0)
+		public IEnumerable<TEntity> All<TKey>(Expression<Func<TEntity, TKey>>? orderByPredicate = null,
+			bool orderByDescending = false, int takeCount = 0, int skipCount = 0)
 		{
 			var query = Queryable;
 
@@ -99,7 +77,9 @@ namespace MovieApi.Data.Repositories
 					? query.OrderByDescending(orderByPredicate)
 					: query.OrderBy(orderByPredicate);
 			}
-			return SkipAndTake(query, skipCount, takeCount).ToList();
+
+			return query.SkipAndTake(skipCount, takeCount)
+				.ToList();
 		}
 
 		/// <inheritdoc />
@@ -121,8 +101,9 @@ namespace MovieApi.Data.Repositories
 		}
 
 		/// <inheritdoc />
-		public async Task<IEnumerable<TEntity>> SearchAsync<TKey>(Expression<Func<TEntity, bool>> searchPredicate, Expression<Func<TEntity, TKey>>? orderByPredicate = null, bool orderByDescending = false,
-			int takeCount = 0, int skipCount = 0, CancellationToken token = default)
+		public async Task<IEnumerable<TEntity>> SearchAsync<TKey>(Expression<Func<TEntity, bool>> searchPredicate,
+			Expression<Func<TEntity, TKey>>? orderByPredicate = null, bool orderByDescending = false, int takeCount = 0,
+			int skipCount = 0, CancellationToken token = default)
 		{
 			var query = Queryable.Where(searchPredicate);
 
@@ -133,21 +114,23 @@ namespace MovieApi.Data.Repositories
 					: query.OrderBy(orderByPredicate);
 			}
 
-			return await SkipAndTake(query, skipCount, takeCount).ToListAsync(token);
+			return await query.SkipAndTake(skipCount, takeCount)
+				.ToListAsync(token);
 		}
 
 		/// <inheritdoc />
-		public async Task<IEnumerable<TEntity>> SearchAsync<TKey>(Expression<Func<TEntity, bool>> searchPredicate, int takeCount = 0, int skipCount = 0,
-			CancellationToken token = default)
+		public async Task<IEnumerable<TEntity>> SearchAsync<TKey>(Expression<Func<TEntity, bool>> searchPredicate,
+			int takeCount = 0, int skipCount = 0, CancellationToken token = default)
 		{
 			var query = Queryable.Where(searchPredicate);
 
-			return await SkipAndTake(query, skipCount, takeCount).ToListAsync(token);
+			return await query.SkipAndTake(skipCount, takeCount)
+				.ToListAsync(token);
 		}
 
 		/// <inheritdoc />
-		public async Task<IEnumerable<TEntity>> AllAsync<TKey>(Expression<Func<TEntity, TKey>>? orderByPredicate = null, bool orderByDescending = false, int takeCount = 0,
-			int skipCount = 0, CancellationToken token = default)
+		public async Task<IEnumerable<TEntity>> AllAsync<TKey>(Expression<Func<TEntity, TKey>>? orderByPredicate = null,
+			bool orderByDescending = false, int takeCount = 0, int skipCount = 0, CancellationToken token = default)
 		{
 			var query = Queryable;
 
@@ -158,7 +141,8 @@ namespace MovieApi.Data.Repositories
 					: query.OrderBy(orderByPredicate);
 			}
 
-			return await SkipAndTake(query, skipCount, takeCount).ToListAsync(token);
+			return await query.SkipAndTake(skipCount, takeCount)
+				.ToListAsync(token);
 		}
 
 		/// <inheritdoc />
