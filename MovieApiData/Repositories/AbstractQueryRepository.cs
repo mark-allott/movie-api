@@ -164,6 +164,15 @@ namespace MovieApi.Data.Repositories
 			}
 		}
 
+		/// <inheritdoc />
+		public IQueryable<TEntity> UntrackedQueryable
+		{
+			get
+			{
+				return Queryable.AsNoTracking();
+			}
+		}
+
 		#endregion IQueryRepository<TEntity> implementation
 	}
 }

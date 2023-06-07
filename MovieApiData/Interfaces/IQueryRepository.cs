@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace MovieApi.Data.Interfaces
 {
@@ -141,5 +142,10 @@ namespace MovieApi.Data.Interfaces
 		/// Provides access to the underlying <see cref="IQueryable{T}"/> so more complex queries might be performed
 		/// </summary>
 		IQueryable<TEntity> Queryable { get; }
+
+		/// <summary>
+		/// Provides access to the <see cref="IQueryable{T}"/>, but applies <see cref="EntityFrameworkQueryableExtensions.AsNoTracking{TEntity}"/>
+		/// </summary>
+		IQueryable<TEntity> UntrackedQueryable { get; }
 	}
 }
