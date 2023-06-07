@@ -38,8 +38,10 @@ namespace MovieApi.Data.Interfaces
 		/// <summary>
 		/// Performs a search of the movie data by specific genre IDs
 		/// </summary>
+		/// <param name="pageNumber"></param>
+		/// <param name="pageSize"></param>
 		/// <param name="genreIds">The IDs for the genres to search for</param>
 		/// <returns></returns>
-		IEnumerable<object> SearchByGenre(params int[] genreIds);
+		MovieSearchResultCollection SearchByGenre(int pageNumber = 1, int pageSize = 0, params int[] genreIds);
 	}
 }

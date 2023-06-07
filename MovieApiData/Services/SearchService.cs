@@ -139,7 +139,7 @@ namespace MovieApi.Data.Services
 		}
 
 		/// <inheritdoc />
-		public IEnumerable<object> SearchByGenre(params int[] genreIds)
+		public MovieSearchResultCollection SearchByGenre(int pageNumber = 1, int pageSize = 0, params int[] genreIds)
 		{
 			throw new NotImplementedException();
 		}
