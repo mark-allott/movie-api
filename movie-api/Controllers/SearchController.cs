@@ -55,5 +55,14 @@ namespace MovieApi.Controllers
 			var result = _searchService.SearchByGenre(page.GetValueOrDefault(1), pageSize.GetValueOrDefault(0), genreName);
 			return new JsonResult(result);
 		}
+
+		[Route("movies")]
+		[HttpPost]
+		[ProducesDefaultResponseType(typeof(MovieSearchResultCollection))]
+		public IActionResult GetMoviesByTitleAndGenre([FromBody] MovieSearchByTitleAndGenreRequest request)
+		{
+			var result = _searchService.SearchByTitleAndGenre(request);
+			return new JsonResult(result);
+		}
 	}
 }
