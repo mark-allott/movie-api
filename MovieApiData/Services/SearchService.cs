@@ -144,6 +144,31 @@ namespace MovieApi.Data.Services
 			throw new NotImplementedException();
 		}
 
+		/// <inheritdoc />
+		public MovieSearchResultCollection Browse(int pageNumber = 1, int pageSize = 10)
+		{
+			var sw = System.Diagnostics.Stopwatch.StartNew();
+			try
+			{
+				var totalCount = _movieRepository.Queryable.Count();
+
+				var collection = _movieRepository.Queryable
+					.AsNoTracking()
+					.Include(i => i.Genres)
+					.SkipAndTake((pageNumber - 1) * pageSize, pageSize)
+					.Select(s => new MovieSearchResult(s))
+					.ToList();
+
+				var response = new MovieSearchResultCollection(collection, totalCount, pageNumber, pageSize);
+				return response;
+			}
+			finally
+			{
+				sw.Stop();
+				_logger.LogInformation($"{nameof(Browse)}(string[]) completed in {sw.Elapsed:ss\\.fff}s");
+			}
+		}
+
 		#endregion ISearchService implementation
 	}
 }

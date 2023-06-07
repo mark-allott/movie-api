@@ -43,5 +43,13 @@ namespace MovieApi.Data.Interfaces
 		/// <param name="genreIds">The IDs for the genres to search for</param>
 		/// <returns></returns>
 		MovieSearchResultCollection SearchByGenre(int pageNumber = 1, int pageSize = 0, params int[] genreIds);
+
+		/// <summary>
+		/// Performs a search of the movie data using pages
+		/// </summary>
+		/// <param name="pageNumber">The page number to start at</param>
+		/// <param name="pageSize">The number of items per page</param>
+		/// <returns>A <see cref="MovieSearchResultCollection"/> containing details of the movies</returns>
+		MovieSearchResultCollection Browse(int pageNumber = 1, int pageSize = 10);
 	}
 }
