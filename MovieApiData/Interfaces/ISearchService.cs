@@ -21,11 +21,19 @@ namespace MovieApi.Data.Interfaces
 		MovieSearchResultCollection SearchByTitle(string title, int pageNumber = 1, int pageSize = 0, bool useSqlLike = false);
 
 		/// <summary>
+		/// Provides a method by which to return all possible Genres in the dataset
+		/// </summary>
+		/// <returns>A <see cref="GenreCollectionResult"/> containing the list of genres</returns>
+		GenreCollectionResult GetGenres();
+
+		/// <summary>
 		/// Performs a search of the movie data by genre(s)
 		/// </summary>
+		/// <param name="pageNumber"></param>
+		/// <param name="pageSize"></param>
 		/// <param name="genres">One or more genre names to search by</param>
 		/// <returns></returns>
-		IEnumerable<object> SearchByGenre(params string[] genres);
+		MovieSearchResultCollection SearchByGenre(int pageNumber = 1, int pageSize = 0, params string[] genres);
 
 		/// <summary>
 		/// Performs a search of the movie data by specific genre IDs
