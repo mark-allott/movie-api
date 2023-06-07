@@ -13,6 +13,7 @@ namespace MovieApi.Data.Entities
 		{
 			MovieGenres = new HashSet<MovieGenre>();
 			Genres = new HashSet<Genre>();
+			Actors = new HashSet<Actor>();
 		}
 
 		#region IIdentifiable implementation
