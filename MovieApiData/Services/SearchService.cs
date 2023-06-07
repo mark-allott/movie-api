@@ -36,27 +36,22 @@ namespace MovieApi.Data.Services
 			var sw = System.Diagnostics.Stopwatch.StartNew();
 			try
 			{
+				(pageNumber, pageSize) = SanitisePaging(pageNumber, pageSize);
+
 				//	Assemble where clause
-				Expression<Func<Movie, bool>> expr = string.IsNullOrEmpty(title)
-					? movie => true
-					: useSqlLike
-						? movie => EF.Functions.Like(movie.Title, title)
-						: movie => movie.Title.ToLower().StartsWith(title.ToLower()) ||
-											 movie.Title.ToLower().Contains(title.ToLower());
+				var expr = GetTitleSearchExpression(title, useSqlLike);
+
+				//	Common expression for getting movies matching the title
+				var moviesForTitle = _movieRepository.UntrackedQueryable
+					.Where(expr);
 
 				//	Find total result count
-				var totalCount = _movieRepository.Queryable
-					.Where(expr)
-					.Count();
+				var totalCount = moviesForTitle.Count();
 
 				//	Assemble the collection of MovieSearchResult entities
-				var collection = _movieRepository.Queryable
-					.AsNoTracking()
+				var collection = moviesForTitle
 					.Include(i => i.Genres)
-					.Where(expr)
-					.SkipAndTake((pageNumber - 1) * pageSize, pageSize)
-					.Select(m => new MovieSearchResult(m))
-					.ToList();
+					.ConvertToSearchResult(pageNumber, pageSize);
 
 				var response = new MovieSearchResultCollection(collection, totalCount, pageNumber, pageSize);
 				return response;
@@ -74,8 +69,7 @@ namespace MovieApi.Data.Services
 			var sw = System.Diagnostics.Stopwatch.StartNew();
 			try
 			{
-				var collection = _genreRepository.Queryable
-					.AsNoTracking()
+				var collection = _genreRepository.UntrackedQueryable
 					.Select(s => s.Name)
 					.ToList();
 
@@ -95,38 +89,26 @@ namespace MovieApi.Data.Services
 			var sw = System.Diagnostics.Stopwatch.StartNew();
 			try
 			{
+				(pageNumber, pageSize) = SanitisePaging(pageNumber, pageSize);
+
 				//	Force naming to lowercase
-				genres = genres.Where(s => !string.IsNullOrEmpty(s))
-				.Select(s => s.ToLower())
-				.ToArray();
+				genres = SanitiseGenreNamesForMatching(genres);
 
-				//	match genres in the datatset against the incoming list
-				var matchedGenres = _genreRepository.Queryable
+				//	Common expression for finding all movies for a genre
+				var moviesForGenres = _genreRepository.UntrackedQueryable
 					.Include(i => i.Movies)
-					.AsNoTracking()
-					.Where(q => genres.Contains(q.Name.ToLower()))
-					.ToList();
+					.Where(q => genres.Any() && genres.Contains(q.Name.ToLower()))
+					.SelectMany(m => m.Movies);
 
-				var totalCount = _genreRepository.Queryable
-					.Include(i => i.Movies)
-					.AsNoTracking()
-					.Where(q => genres.Contains(q.Name.ToLower()))
-					.SelectMany(m => m.Movies)
+				var totalCount = moviesForGenres
 					.Distinct()
 					.Count();
 
 				//	Assemble the collection of MovieSearchResult entities
-				var collection = _genreRepository.Queryable
-					.AsNoTracking()
-					.Include(i => i.Movies)
-					.AsNoTracking()
-					.Where(q => genres.Contains(q.Name.ToLower()))
-					.SelectMany(m => m.Movies)
+				var collection = moviesForGenres
 					.Include(i => i.Genres)
 					.Distinct()
-					.SkipAndTake((pageNumber - 1) * pageSize, pageSize)
-					.Select(s => new MovieSearchResult(s))
-					.ToList();
+					.ConvertToSearchResult(pageNumber, pageSize);
 
 				var response = new MovieSearchResultCollection(collection, totalCount, pageNumber, pageSize);
 				return response;
@@ -150,14 +132,15 @@ namespace MovieApi.Data.Services
 			var sw = System.Diagnostics.Stopwatch.StartNew();
 			try
 			{
-				var totalCount = _movieRepository.Queryable.Count();
+				(pageNumber, pageSize) = SanitisePaging(pageNumber, pageSize);
 
-				var collection = _movieRepository.Queryable
-					.AsNoTracking()
+				var allMovies = _movieRepository.UntrackedQueryable;
+
+				var totalCount = allMovies.Count();
+
+				var collection = allMovies
 					.Include(i => i.Genres)
-					.SkipAndTake((pageNumber - 1) * pageSize, pageSize)
-					.Select(s => new MovieSearchResult(s))
-					.ToList();
+					.ConvertToSearchResult(pageNumber, pageSize);
 
 				var response = new MovieSearchResultCollection(collection, totalCount, pageNumber, pageSize);
 				return response;
@@ -170,5 +153,45 @@ namespace MovieApi.Data.Services
 		}
 
 		#endregion ISearchService implementation
+
+		#region Helper methods
+
+		/// <summary>
+		/// Assembles a where clause expression for searching against movie titles
+		/// </summary>
+		/// <param name="title">The title to search for</param>
+		/// <param name="useSqlLike">Specify if searching can use the SQL <c>LIKE</c> command</param>
+		/// <returns>The appropriate clause for a search</returns>
+		private static Expression<Func<Movie, bool>> GetTitleSearchExpression(string title, bool useSqlLike = false)
+		{
+			//	Remove extra spaces
+			title = title.Trim();
+			return string.IsNullOrWhiteSpace(title)
+				? movie => true
+				: useSqlLike
+					? movie => EF.Functions.Like(movie.Title, title)
+					: movie => movie.Title.ToLower().StartsWith(title.ToLower()) ||
+										 movie.Title.ToLower().Contains(title.ToLower());
+		}
+
+		private static (int pageNumber, int pageSize) SanitisePaging(int pageNumber, int pageSize)
+		{
+			return QueryHelpers.SanitisePaging(pageNumber, pageSize);
+		}
+
+		/// <summary>
+		/// Performs sanitising of an array of genre names
+		/// </summary>
+		/// <param name="genreNames">The names to be sanitised</param>
+		/// <returns>An array of genre names, <c>Trim()</c>'d and in lowercase, suitable for searching with</returns>
+		private static string[] SanitiseGenreNamesForMatching(params string[] genreNames)
+		{
+			return genreNames
+				.Select(s => s.ToLower().Trim())
+				.Where(s => !string.IsNullOrWhiteSpace(s))
+				.ToArray();
+		}
+
+		#endregion Helper methods
 	}
 }
