@@ -33,13 +33,16 @@ namespace MovieApi.Data.Services
 		public MovieSearchResultCollection SearchByTitle(string title, int pageNumber = 1, int pageSize = 0,
 			bool useSqlLike = false)
 		{
+			var sw = System.Diagnostics.Stopwatch.StartNew();
+			try
+			{
 			//	Assemble where clause
 			Expression<Func<Movie, bool>> expr = string.IsNullOrEmpty(title)
 				? movie => true
 				: useSqlLike
 					? movie => EF.Functions.Like(movie.Title, title)
-					: movie => movie.Title.StartsWith(title, StringComparison.InvariantCultureIgnoreCase) ||
-										 movie.Title.Contains(title, StringComparison.InvariantCultureIgnoreCase);
+						: movie => movie.Title.ToLower().StartsWith(title.ToLower()) ||
+											 movie.Title.ToLower().Contains(title.ToLower());
 
 			//	Find total result count
 			var totalCount = _movieRepository.Queryable
@@ -57,6 +60,12 @@ namespace MovieApi.Data.Services
 
 			var response = new MovieSearchResultCollection(collection, totalCount, pageNumber, pageSize);
 			return response;
+		}
+			finally
+			{
+				sw.Stop();
+				_logger.LogInformation($"{nameof(SearchByTitle)} completed in {sw.Elapsed:ss\\.fff}s");
+			}
 		}
 
 		/// <inheritdoc />
