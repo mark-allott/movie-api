@@ -153,30 +153,72 @@ namespace MovieApi.Data.Services
 		}
 
 		/// <inheritdoc />
-		public MovieSearchResultCollection SearchByTitleAndGenre(string title, int pageNumber = 1, int pageSize = 0,
-			bool useSqlLike = false, params string[] genres)
+		public MovieSearchResultCollection SearchByTitleAndGenre(MovieSearchByTitleAndGenreRequest request)
 		{
 			var sw = System.Diagnostics.Stopwatch.StartNew();
 			try
 			{
-				//	Santising inputs
-				(pageNumber, pageSize) = SanitisePaging(pageNumber, pageSize);
-				genres = SanitiseGenreNamesForMatching(genres);
+				//	Sanitising inputs
+				var (pageNumber, pageSize) = SanitisePaging(request.Page, request.PageSize);
+				var genres = SanitiseGenreNamesForMatching(request.Genres);
 
-				//	Assemble where clause
-				var expr = GetTitleSearchExpression(title, useSqlLike);
+				//	Placeholder for the appropriate query to match against the genres specified
+				IQueryable<Movie> moviesMatchingGenres;
 
-				//	Common expression for getting movies matching the title, pulling genres and performing matching as well
-				var matchingMovies = _movieRepository.UntrackedQueryable
+				if (genres.Any())
+				{
+					var commonQuery = _genreRepository.UntrackedQueryable
+						.Where(q => genres.Contains(q.Name.ToLower()));
+
+					if (request.MatchAllGenres)
+					{
+						//	How many genres do we match against in total
+						var genresToMatch = commonQuery.Count();
+
+						//	Next, grab all IDs for movies which match all genre selections
+						var movieIds = commonQuery
+							.Include(i => i.MovieGenres)
+							.SelectMany(m => m.MovieGenres)
+							.GroupBy(mg => mg.Movie,
+								mg => mg.Genre,
+								(mwg, mgs) => new { Movie = mwg, MatchedGenres = mgs.Count() })
+							.Where(q => q.MatchedGenres == genresToMatch)
+							.Select(s => s.Movie.Id)
+							.Distinct()
+							.ToList();
+
+						//	Go back to the movie repo with the list of IDs for the movies which match
+						moviesMatchingGenres = _movieRepository.UntrackedQueryable
+							.Where(q => movieIds.Contains(q.Id));
+					}
+					else
+					{
+						//	Genres specified, but we match against any of them
+						moviesMatchingGenres = commonQuery
+							.Include(i => i.Movies)
+							.SelectMany(m => m.Movies)
+							.Distinct();
+					}
+				}
+				else
+				{
+					//	No genres specified, so return all possible movies for next step
+					moviesMatchingGenres = _movieRepository.UntrackedQueryable;
+				}
+
+				//	Assemble where clause for movie title search
+				var expr = GetTitleSearchExpression(request.Title, request.UseSqlLikeOperator);
+
+				// Common expression for extracting the movies matching the title and genres
+				var matchingMovies = moviesMatchingGenres
 					.Where(expr)
-					.Include(i => i.Genres)
-					.Where(s => !genres.Any() ||
-					            s.Genres.Any(g => genres.Contains(g.Name.ToLower())));
+					.AsQueryable();
 
 				//	Find total result count
 				var totalCount = matchingMovies.Count();
 
-				//	Assemble the collection of MovieSearchResult entities
+				// Assemble the collection of MovieSearchResult entities, adding in all genres for the
+				// movies (not just the matching ones)
 				var collection = matchingMovies
 					.Include(i => i.Genres)
 					.ConvertToSearchResult(pageNumber, pageSize);
