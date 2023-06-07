@@ -97,7 +97,7 @@ namespace MovieApi.Data.Services
 				//	Common expression for finding all movies for a genre
 				var moviesForGenres = _genreRepository.UntrackedQueryable
 					.Include(i => i.Movies)
-					.Where(q => genres.Any() && genres.Contains(q.Name.ToLower()))
+					.Where(q => !genres.Any() || genres.Contains(q.Name.ToLower()))
 					.SelectMany(m => m.Movies);
 
 				var totalCount = moviesForGenres
