@@ -108,5 +108,22 @@ namespace MovieApi.Controllers
 			}
 			return BadRequest();
 		}
+
+		[Route("actors")]
+		[HttpPost]
+		[ProducesDefaultResponseType(typeof(ActorResultCollection))]
+		public IActionResult SearchForActors([FromBody] ActorSearchByNameRequest request)
+		{
+			try
+			{
+				var result = _searchService.SearchActorsByName(request);
+				return new JsonResult(result);
+			}
+			catch (Exception e)
+			{
+				Logger.LogError(e, $"Error when executing {nameof(SearchForActors)} with payload: {JsonSerializer.Serialize(request)}");
+			}
+			return BadRequest();
+		}
 	}
 }
