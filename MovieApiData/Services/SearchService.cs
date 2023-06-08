@@ -247,6 +247,7 @@ namespace MovieApi.Data.Services
 
 				var collection = _actorRepository.UntrackedQueryable
 					.Select(s => s.Name)
+					.OrderBy(o => o)
 					.SkipAndTake((pageNumber - 1) * pageSize, pageSize)
 					.ToList();
 
@@ -281,6 +282,7 @@ namespace MovieApi.Data.Services
 
 				var collection = matchingActors
 					.Select(s => s.Name)
+					.OrderBy(o => o)
 					.SkipAndTake((pageNumber - 1) * pageSize, pageSize)
 					.ToList();
 
