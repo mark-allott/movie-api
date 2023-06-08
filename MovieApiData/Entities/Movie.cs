@@ -13,7 +13,7 @@ namespace MovieApi.Data.Entities
 		{
 			MovieGenres = new HashSet<MovieGenre>();
 			Genres = new HashSet<Genre>();
-			Actors = new HashSet<Actor>();
+			Cast = new HashSet<Actor>();
 		}
 
 		#region IIdentifiable implementation
@@ -38,7 +38,7 @@ namespace MovieApi.Data.Entities
 		/// <summary>
 		/// Skip-link navigation to the Actor(s) associated with this movie
 		/// </summary>
-		public virtual ICollection<Actor> Actors { get; set; }
+		public virtual ICollection<Actor> Cast { get; set; }
 
 		#endregion Navigation links
 	}
