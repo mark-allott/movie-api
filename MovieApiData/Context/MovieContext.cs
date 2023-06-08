@@ -33,7 +33,7 @@ namespace MovieApi.Data.Context
 
 			//	Define the associations between Movie <-> MovieActor <-> Actor
 			modelBuilder.Entity<Movie>()
-				.HasMany(m => m.Actors)
+				.HasMany(m => m.Cast)
 				.WithMany(m => m.Movies)
 				.UsingEntity<MovieActor>(j => j.HasKey(nameof(Entities.MovieActor.MovieId), nameof(Entities.MovieActor.ActorId)));
 		}

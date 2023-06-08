@@ -27,7 +27,7 @@ namespace MovieApi.Data.DTO
 			VoteAverage = movie.VoteAverage;
 			PosterUrl = movie.PosterUrl;
 			Genre = string.Join(", ", movie.Genres.Select(s => s.Name));
-			Actors = string.Join(", ", movie.Actors.Select(s => s.Name));
+			Actors = string.Join(", ", movie.Cast.Select(s => s.Name));
 		}
 
 		#endregion Ctor
