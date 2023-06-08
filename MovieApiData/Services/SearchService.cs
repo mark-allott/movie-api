@@ -14,15 +14,17 @@ namespace MovieApi.Data.Services
 		private readonly ILogger<SearchService> _logger;
 		private readonly IQueryRepository<Genre> _genreRepository;
 		private readonly IQueryRepository<Movie> _movieRepository;
+		private readonly IActorQueryRepository _actorRepository;
 
 		#region Ctor
 
 		public SearchService(ILogger<SearchService> logger, IQueryRepository<Genre> genreRepository,
-			IQueryRepository<Movie> movieRepository)
+			IQueryRepository<Movie> movieRepository, IActorQueryRepository actorRepository)
 		{
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			_genreRepository = genreRepository ?? throw new ArgumentNullException(nameof(genreRepository));
 			_movieRepository = movieRepository ?? throw new ArgumentNullException(nameof(movieRepository));
+			_actorRepository = actorRepository ?? throw new ArgumentNullException(nameof(actorRepository));
 		}
 
 		#endregion Ctor
@@ -230,6 +232,31 @@ namespace MovieApi.Data.Services
 			{
 				sw.Stop();
 				_logger.LogInformation($"{nameof(SearchByTitleAndGenre)} completed in {sw.Elapsed:ss\\.fff}s");
+			}
+		}
+
+		/// <inheritdoc />
+		public ActorResultCollection GetActors(int pageNumber = 1, int pageSize = 0)
+		{
+			var sw = System.Diagnostics.Stopwatch.StartNew();
+			try
+			{
+				(pageNumber, pageSize) = SanitisePaging(pageNumber, pageSize);
+
+				var totalCount = _actorRepository.UntrackedQueryable.Count();
+
+				var collection = _actorRepository.UntrackedQueryable
+					.Select(s => s.Name)
+					.SkipAndTake((pageNumber - 1) * pageSize, pageSize)
+					.ToList();
+
+				var response = new ActorResultCollection(collection, totalCount, pageNumber, pageSize);
+				return response;
+			}
+			finally
+			{
+				sw.Stop();
+				_logger.LogInformation($"{nameof(GetActors)} completed in {sw.Elapsed:ss\\.fff}s");
 			}
 		}
 
