@@ -60,5 +60,11 @@ namespace MovieApi.Data.Interfaces
 		/// A <see cref="MovieSearchResultCollection"/> object containing the results of the search
 		/// </returns>
 		MovieSearchResultCollection SearchByTitleAndGenre(MovieSearchByTitleAndGenreRequest request);
+
+		/// <summary>
+		/// Performs a search of the dataset for all actors within it
+		/// </summary>
+		/// <returns>A <see cref="ActorResultCollection"/> containing a list of actor names</returns>
+		ActorResultCollection GetActors(int pageNumber = 1, int pageSize = 0);
 	}
 }
