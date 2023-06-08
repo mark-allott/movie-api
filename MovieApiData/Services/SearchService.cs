@@ -260,6 +260,40 @@ namespace MovieApi.Data.Services
 			}
 		}
 
+		/// <inheritdoc />
+		public ActorResultCollection SearchActorsByName(ActorSearchByNameRequest request)
+		{
+			var sw = System.Diagnostics.Stopwatch.StartNew();
+			try
+			{
+				//	Sanitising inputs
+				var (pageNumber, pageSize) = SanitisePaging(request.Page, request.PageSize);
+
+				//	Assemble where clause for movie title search
+				var expr = GetNameSearchExpression(request.Name, request.UseSqlLikeOperator);
+
+				// Common expression for extracting the movies matching the title and genres
+				var matchingActors = _actorRepository.UntrackedQueryable
+					.Where(expr)
+					.AsQueryable();
+
+				var totalMatched = matchingActors.Count();
+
+				var collection = matchingActors
+					.Select(s => s.Name)
+					.SkipAndTake((pageNumber - 1) * pageSize, pageSize)
+					.ToList();
+
+				var response = new ActorResultCollection(collection, totalMatched, pageNumber, pageSize);
+				return response;
+			}
+			finally
+			{
+				sw.Stop();
+				_logger.LogInformation($"{nameof(SearchActorsByName)} completed in {sw.Elapsed:ss\\.fff}s");
+			}
+		}
+
 		#endregion ISearchService implementation
 
 		#region Helper methods
@@ -300,6 +334,24 @@ namespace MovieApi.Data.Services
 				.Distinct()
 				.OrderBy(o => o)
 				.ToArray();
+		}
+
+		/// <summary>
+		/// Assembles a where clause expression for searching against actor names
+		/// </summary>
+		/// <param name="name">The actor name to search for</param>
+		/// <param name="useSqlLike">Specify if searching can use the SQL <c>LIKE</c> command</param>
+		/// <returns>The appropriate clause for a search</returns>
+		private static Expression<Func<Actor, bool>> GetNameSearchExpression(string name, bool useSqlLike = false)
+		{
+			//	Remove extra spaces
+			name = name.Trim();
+			return string.IsNullOrWhiteSpace(name)
+				? a => true
+				: useSqlLike
+					? a => EF.Functions.Like(a.Name, name)
+					: a => a.Name.ToLower().StartsWith(name.ToLower()) ||
+										 a.Name.ToLower().Contains(name.ToLower());
 		}
 
 		#endregion Helper methods
