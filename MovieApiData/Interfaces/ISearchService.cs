@@ -66,5 +66,12 @@ namespace MovieApi.Data.Interfaces
 		/// </summary>
 		/// <returns>A <see cref="ActorResultCollection"/> containing a list of actor names</returns>
 		ActorResultCollection GetActors(int pageNumber = 1, int pageSize = 0);
+
+		/// <summary>
+		/// Performs a search of the dataset for actors matching the <see cref="ActorSearchByNameRequest.Name"/> in <paramref name="request"/>
+		/// </summary>
+		/// <param name="request">The query parameters</param>
+		/// <returns>A <see cref="ActorResultCollection"/> containing a list of actors matching the name requested</returns>
+		ActorResultCollection SearchActorsByName(ActorSearchByNameRequest request);
 	}
 }
