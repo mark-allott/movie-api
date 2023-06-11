@@ -73,5 +73,12 @@ namespace MovieApi.Data.Interfaces
 		/// <param name="request">The query parameters</param>
 		/// <returns>A <see cref="ActorResultCollection"/> containing a list of actors matching the name requested</returns>
 		ActorResultCollection SearchActorsByName(ActorSearchByNameRequest request);
+
+		/// <summary>
+		/// Performs a combination search of the database for movies matching the title, genre and actor(s)
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		MovieSearchResultCollection SearchByTitleGenreAndActor(MovieSearchRequest request);
 	}
 }
