@@ -125,5 +125,22 @@ namespace MovieApi.Controllers
 			}
 			return BadRequest();
 		}
+
+		[Route("movies/advanced")]
+		[HttpPost]
+		[ProducesDefaultResponseType(typeof(MovieSearchResultCollection))]
+		public IActionResult AdvancedMovieSearch([FromBody] MovieSearchRequest request)
+		{
+			try
+			{
+				var result = _searchService.SearchByTitleGenreAndActor(request);
+				return new JsonResult(result);
+			}
+			catch (Exception e)
+			{
+				Logger.LogError(e, $"Error when executing {nameof(AdvancedMovieSearch)} with payload: {JsonSerializer.Serialize(request)}");
+			}
+			return BadRequest();
+		}
 	}
 }
