@@ -24,6 +24,9 @@
 1. Again, prior to attempting to run the application, the database **must** be created / initialised, or when connecting to it, the console *will* output SQL errors / exceptions!
     1. If using Visual Studio: open the "Package Manager Console" from the View->Other Windows menu option
     1. If using VSCode, open a Terminal session
+    1. Before starting, you will need to make sure the EF Core CLI tools are installed. To check if they are, run the command `dotnet ef` in the appropriate console window. If the tools are not installed, you will see an error message such as `Could not execute because the specified command or file was not found.` If this is the case, one further step is required before going any further:
+          1. From the console window, execute the command `dotnet tool install --global dotnet-ef`
+          1. When completed, re-try the `dotnet ef` command again. If you do not see an error, you should be able to continue
     1. From the command window (Package Manager Console or Terminal session), ensure the current folder is the root of the project, e.g. `[git clone root location]/movie-api`
     1. From the command-line, run the following: `dotnet ef database update -c MovieContext -p ./MovieApiData/ -s ./movie-api/` - direction of slashes may be different, dependent upon OS, console used etc.
 1. Now the database is configured and initialised, you can run the project
